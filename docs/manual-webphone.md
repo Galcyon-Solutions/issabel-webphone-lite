@@ -118,6 +118,7 @@ El enlace **Opciones avanzadas** (abajo de la pantalla) abre el asistente comple
 | No pide el micrófono | Estás en `http://` o con IP y certificado inválido | Entra por `https://tu-dominio` con candado |
 | Conecta pero **no se oye nada** o solo un lado | UDP del audio cerrado o IP externa mal anunciada | Abre en el firewall el UDP `10000-20000`; en nube con NAT, revisa `external_media_address`; Opciones avanzadas, paso de audio |
 | Se desconecta cada ~30 s | Un WebSocket sin registro SIP lo cierra Asterisk a los 32 s | Revisa que el usuario esté **activado** y que su anexo sea WebRTC |
+| Terminaste el Inicio rápido y **la barra no aparece arriba** | Mientras tu usuario no tenía teléfono, el envoltorio recibió un 403 y se apagó solo con la cookie `wp_nowrap` (10 minutos) | Desde la versión de este arreglo el Inicio rápido borra la cookie y recarga una vez. Si usas una versión anterior: espera 10 minutos o borra la cookie `wp_nowrap` y recarga |
 | `403` y barra inactiva | Usuario sin activar, sin extensión o sesión de Issabel vencida | Vuelve a entrar; si persiste, Inicio rápido |
 | El instalador dice `ABORTA: ...` | Falta algo (no es Issabel, `configtest` roto...) | Lee el motivo; no se cambió nada |
 

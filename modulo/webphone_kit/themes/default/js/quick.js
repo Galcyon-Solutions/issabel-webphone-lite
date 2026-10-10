@@ -235,6 +235,15 @@
       var par = null;
       try { if (w.parent && w.parent !== w && w.parent.WebphoneKit) par = w.parent.WebphoneKit; } catch (e) { par = null; }
       if (par) { S.kit = par; try { par.recheck(); } catch (e) { } watch(); return; }
+      // Sin envoltorio y con la cookie wp_nowrap: el envoltorio se quito solo mientras esta cuenta aun no tenia
+      // telefono (el backend respondia 403) y la cookie dura 10 minutos. Ya hay telefono: se borra y se recarga
+      // una vez para que vuelva la barra arriba. Sin la cookie no se recarga, asi que no hay bucle.
+      try {
+        if (w.top === w && /(?:^|;\s*)wp_nowrap=1(?:;|$)/.test(document.cookie)) {
+          document.cookie = 'wp_nowrap=; Path=/; Max-Age=0; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+          if (!/(?:^|;\s*)wp_nowrap=1(?:;|$)/.test(document.cookie)) { location.reload(); return; }
+        }
+      } catch (e) { }
       if (w.WebphoneKit) { mountOwn(); return; }
       var base = (document.querySelector('link[href*="wizard.css"]') || {}).href || '';
       base = base.replace(/css\/wizard\.css.*$/, '');
