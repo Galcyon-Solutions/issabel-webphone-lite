@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2026 Galcyon
+# Generado por client-src/build.sh. Verificar desde modulo/:  sha256sum -c --quiet ../client-src/BUNDLE.sha256
+# node 22.13.1  npm 11.1.0  jssip 3.13.8  vite 7.3.7
+# package-lock.json sha256 370e300290ac8d4d64684e762830f09321665961b63dee5c7b9b160da0173528
+# bytes webphone.js 337714  webphone.css 19609
+e5cdc37067693c0af47dfb5c65d8aa27b64b4a118f2c518e5ee371906ea4b0ac  webphone_kit/themes/default/js/webphone.js
+e8593e82993d82acb59304a3cc8358663f0d0f4f1b9f635271ce5abdad73ef08  webphone_kit/themes/default/css/webphone.css

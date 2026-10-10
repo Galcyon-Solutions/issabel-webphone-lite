@@ -1,0 +1,49 @@
+<?php
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ * Copyright (C) 2026 Galcyon
+ */
+global $arrLangModule;
+$arrLangModule = array(
+"ERROR" => "ERROR",
+"Message" => "Mensaje",
+"Validation Error" => "Error de validación",
+"Only administrators can use this module" => "Solo los administradores pueden usar este módulo",
+"Cannot connect to the webphone database" => "No se pudo conectar a la base de datos del webphone",
+"Request rejected: invalid or missing security token. Reload the page and try again." => "Solicitud rechazada: el token de seguridad falta o no es válido. Recarga la página e inténtalo de nuevo.",
+"Webphone Lite" => "Webphone Lite",
+"Enable" => "Activar",
+"Disable" => "Desactivar",
+"Settings" => "Ajustes",
+"User" => "Usuario",
+"Description" => "Descripción",
+"Extension" => "Extensión",
+"Webphone enabled" => "Webphone activado",
+"WebRTC extension" => "Extensión WebRTC",
+"Yes" => "Sí",
+"No" => "No",
+"Outdated (extension changed)" => "Desactualizado (cambió la extensión)",
+"(none)" => "(ninguna)",
+"Users enabled" => "Usuarios activados",
+"Users disabled" => "Usuarios desactivados",
+"Skipped (no valid extension, or extension already in use)" => "Omitidos (sin extensión válida o extensión ya en uso)",
+"Warning: the extension of some enabled users is not a WebRTC extension" => "Aviso: la extensión de algunos usuarios activados no es una extensión WebRTC",
+"No users selected" => "No seleccionaste ningún usuario",
+"WebSocket path" => "Ruta WebSocket",
+"STUN servers" => "Servidores STUN",
+"Registration expiry (seconds)" => "Vigencia del registro (segundos)",
+"Save" => "Guardar",
+"Users" => "Usuarios",
+"Webphone settings" => "Ajustes del webphone",
+"Required field" => "Campo obligatorio",
+"Absolute path served by Apache toward Asterisk, for example /kit-ws" => "Ruta absoluta que Apache enruta hacia Asterisk, por ejemplo /kit-ws",
+"One per line or separated by commas: stun:host:port. Empty means no STUN. Maximum 5." => "Uno por línea o separados por comas: stun:host:puerto. Vacío significa sin STUN. Máximo 5.",
+"Between 60 and 3600" => "Entre 60 y 3600",
+"The following fields contain errors" => "Los siguientes campos tienen errores",
+"Settings saved" => "Ajustes guardados",
+"The settings could not be saved" => "No se pudieron guardar los ajustes",
+"You do not have access to this module" => "No tienes acceso a este módulo",
+"This page needs JavaScript. Without it you can still enable or disable users with this form." => "Esta página necesita JavaScript. Sin él, igual puedes activar o desactivar usuarios con este formulario.",
+"User ids" => "Identificadores de usuario"
+);
+?>

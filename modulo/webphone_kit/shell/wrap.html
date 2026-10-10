@@ -1,0 +1,26 @@
+<!doctype html>
+<!--
+  SPDX-License-Identifier: GPL-2.0-or-later
+  Copyright (C) 2026 Galcyon
+
+  Pagina envoltorio del webphone (etapa 4). ESTATICA: sin PHP. La sirve Apache (kit-webphone-wrap.conf) en lugar de
+  index.php solo cuando el navegador pide un documento de nivel superior (Sec-Fetch-Dest: document). Arriba va la barra
+  del webphone y debajo, en un iframe, la misma URL que se pidio. Ver README-envoltorio.md.
+  Las rutas son absolutas porque esta pagina responde a la URL original, no a su propia ruta.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Issabel</title>
+<link rel="stylesheet" href="/modules/webphone_kit/themes/default/css/webphone.css">
+<link rel="stylesheet" href="/modules/webphone_kit/shell/wrap.css">
+<script src="/modules/webphone_kit/themes/default/js/webphone.js" defer></script>
+<script src="/modules/webphone_kit/shell/wrap.js" defer></script>
+</head>
+<body>
+<div id="wpk-shell-bar"></div>
+<iframe id="wpk-shell-frame" title="Issabel" sandbox="allow-same-origin allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
+<noscript>Activa JavaScript para usar Issabel.</noscript>
+</body>
+</html>

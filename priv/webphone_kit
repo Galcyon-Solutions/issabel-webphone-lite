@@ -1,0 +1,115 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2026 Galcyon
+#
+# Helper root del modulo webphone_kit. Lo ejecuta SOLO issabel-helper:
+#   sudo /usr/sbin/issabel-helper webphone_kit <verbo>
+# Dueño root, modo 0755, en /usr/share/issabel/privileged/. Verbos FIJOS y SIN argumentos libres:
+#   status       informa (clave=valor) el estado de la conf de Apache del WSS, el modulo proxy_wstunnel y el firewall. No cambia nada.
+#   install_ws   instala la conf de Apache del WSS desde la plantilla root /usr/share/webphone_kit/ws.conf.tpl,
+#                comprueba la sintaxis (httpd -t) y recarga con graceful. Idempotente: si ya hay una ruta /kit-ws
+#                (nuestra o de otra unidad) NO duplica. Si la sintaxis falla, deja todo como estaba.
+#   remove_ws    quita SOLO la conf que instalo este helper (lleva la marca "managed-by: webphone_kit"), comprueba y recarga.
+# Cualquier otro verbo, y cualquier argumento extra, se rechaza con codigo 2. No lee ni imprime claves ni certificados.
+set -u
+umask 022
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+export PATH LANG=C
+TPL=/usr/share/webphone_kit/ws.conf.tpl
+CONF=/etc/httpd/conf.d/webphone_kit-ws.conf
+MARK='# managed-by: webphone_kit'
+LOCK=/var/run/webphone_kit-helper.lock
+
+die() { echo "error=$1"; exit "${2:-1}"; }
+
+# Exactamente un argumento: el verbo
+[ "$#" -eq 1 ] || die "usage" 2
+case "$1" in status|install_ws|remove_ws) ;; *) die "unknown_verb" 2 ;; esac
+VERB=$1
+[ "$(id -u)" = 0 ] || die "not_root" 1
+
+# Cualquier conf de Apache (que no sea la nuestra) que ya enrute /kit-ws
+foreign_ws() {
+  local f
+  for f in /etc/httpd/conf.d/*.conf; do
+    [ -f "$f" ] || continue
+    [ "$f" = "$CONF" ] && continue
+    if grep -Eq '^[[:space:]]*ProxyPass[[:space:]]+"?/kit-ws"?[[:space:]]' "$f"; then echo "${f##*/}"; return 0; fi
+  done
+  return 1
+}
+
+ours() { [ -f "$CONF" ] && grep -qxF "$MARK" "$CONF"; }
+
+check_and_reload() {
+  if ! httpd -t >/dev/null 2>&1; then return 1; fi
+  apachectl graceful >/dev/null 2>&1 || return 2
+  return 0
+}
+
+exec 9>"$LOCK" || die "lock" 1
+flock -n 9 || die "busy" 1
+
+case "$VERB" in
+status)
+  echo "helper=1"
+  if ours; then echo "apache_conf=ours"
+  elif f=$(foreign_ws); then echo "apache_conf=foreign"; echo "apache_conf_file=$f"
+  else echo "apache_conf=absent"; fi
+  if httpd -M 2>/dev/null | grep -q 'proxy_wstunnel_module'; then echo "proxy_wstunnel=yes"; else echo "proxy_wstunnel=no"; fi
+  if httpd -t >/dev/null 2>&1; then echo "configtest=ok"; else echo "configtest=fail"; fi
+  [ -f "$TPL" ] && echo "template=yes" || echo "template=no"
+  # Firewall: solo si el rango RTP aparece abierto. Nunca se imprimen las reglas.
+  if command -v iptables >/dev/null 2>&1; then
+    pol=$(iptables -S INPUT 2>/dev/null | awk '/^-P INPUT/{print $3}')
+    if [ "$pol" = "ACCEPT" ]; then echo "firewall=open"
+    elif [ -n "$pol" ]; then
+      # El rango RTP efectivo (puede estar acotado por el Resolver rtp_range); si no se lee, el de fabrica 10000:20000
+      rs=$(asterisk -rx 'rtp show settings' 2>/dev/null | awk '/Port start:/{print $3; exit}')
+      re=$(asterisk -rx 'rtp show settings' 2>/dev/null | awk '/Port end:/{print $3; exit}')
+      case "$rs" in ''|*[!0-9]*) rs=10000;; esac
+      case "$re" in ''|*[!0-9]*) re=20000;; esac
+      if iptables -S 2>/dev/null | grep -Eq -- "-p udp .*--dport ($rs:$re|$rs|10000:20000)"; then echo "firewall=rtp_open"; else echo "firewall=rtp_closed"; fi
+    else echo "firewall=unknown"; fi
+  else echo "firewall=unknown"; fi
+  ;;
+install_ws)
+  [ -f "$TPL" ] || die "no_template" 1
+  grep -qxF "$MARK" "$TPL" || die "bad_template" 1
+  if f=$(foreign_ws); then echo "result=already_present"; echo "apache_conf_file=$f"; exit 0; fi
+  httpd -M 2>/dev/null | grep -q 'proxy_wstunnel_module' || die "no_proxy_wstunnel" 1
+  if ours && cmp -s "$TPL" "$CONF"; then echo "result=unchanged"; exit 0; fi
+  tmp=$(mktemp /etc/httpd/conf.d/.webphone_kit-ws.XXXXXX) || die "tmp" 1
+  trap 'rm -f "$tmp"' EXIT
+  cp "$TPL" "$tmp" && chmod 644 "$tmp" || die "copy" 1
+  prev=""
+  if ours; then prev=$(mktemp /var/tmp/webphone_kit-ws.prev.XXXXXX); cp -p "$CONF" "$prev"; fi
+  mv -f "$tmp" "$CONF"
+  trap - EXIT
+  if check_and_reload; then rc=0; else rc=$?; fi
+  if [ "$rc" != 0 ]; then
+    # reversa inmediata
+    if [ -n "$prev" ]; then cp -p "$prev" "$CONF"; else rm -f "$CONF"; fi
+    httpd -t >/dev/null 2>&1 && apachectl graceful >/dev/null 2>&1
+    [ -z "$prev" ] || rm -f "$prev"
+    die "configtest_failed" 1
+  fi
+  [ -z "$prev" ] || rm -f "$prev"
+  echo "result=installed"
+  ;;
+remove_ws)
+  if ! ours; then
+    if [ -f "$CONF" ]; then die "not_ours" 1; fi
+    echo "result=absent"; exit 0
+  fi
+  cp -p "$CONF" /var/tmp/webphone_kit-ws.removed
+  rm -f "$CONF"
+  if check_and_reload; then echo "result=removed"; rm -f /var/tmp/webphone_kit-ws.removed
+  else
+    cp -p /var/tmp/webphone_kit-ws.removed "$CONF"
+    httpd -t >/dev/null 2>&1 && apachectl graceful >/dev/null 2>&1
+    die "configtest_failed" 1
+  fi
+  ;;
+esac
+exit 0

@@ -1,0 +1,436 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* Copyright (C) 2026 Galcyon */
+/*
+ * Asistente del webphone. Misma familia visual que la barra (client-src/DESIGN.md): neutros frios, un solo acento azul,
+ * verde y rojo solo como semantica, sistema tipografico del sistema, esquinas de 8 y 12 px.
+ * Todo vive bajo .wpa (no se filtra a Issabel) y cada regla lleva ese prefijo para ganar a los estilos de elemento del marco.
+ * El ancho de la pantalla lo decide el contenedor (container queries), no la ventana: sirve en un panel angosto y en la galeria.
+ * Movimiento: solo transform y opacity. Nunca se anima height, width, padding ni margin.
+ */
+
+/* @tokens light */
+.wpa {
+  --wpa-bg: #f6f5f8;
+  --wpa-surface: #ffffff;
+  --wpa-sunken: #eeedf2;
+  --wpa-ink: #25232b;
+  --wpa-ink-2: #585563;
+  --wpa-line: #dcdae3;
+  --wpa-line-strong: #767385;
+  --wpa-accent: #562d7b;
+  --wpa-accent-ink: #ffffff;
+  --wpa-accent-soft: #ece6f3;
+  --wpa-ok: #176240;
+  --wpa-ok-ink: #ffffff;
+  --wpa-ok-soft: #e2f1e8;
+  --wpa-warn: #7a4b00;
+  --wpa-warn-soft: #fbefd5;
+  --wpa-bad: #a52a2a;
+  --wpa-bad-ink: #ffffff;
+  --wpa-bad-soft: #fbe9e7;
+  --wpa-focus: #562d7b;
+  --wpa-shadow: 0 1px 2px rgba(21, 27, 38, .06), 0 8px 24px rgba(21, 27, 38, .06);
+  color-scheme: light;
+}
+/* @tokens dark */
+.wpa[data-resolved="dark"] {
+  --wpa-bg: #1d1a24;
+  --wpa-surface: #26222f;
+  --wpa-sunken: #302b3b;
+  --wpa-ink: #eceaf2;
+  --wpa-ink-2: #b6b1c4;
+  --wpa-line: #3e3850;
+  --wpa-line-strong: #8c86a0;
+  --wpa-accent: #cfb3ea;
+  --wpa-accent-ink: #1c0f2a;
+  --wpa-accent-soft: #3a2d4d;
+  --wpa-ok: #5fd0a0;
+  --wpa-ok-ink: #05210f;
+  --wpa-ok-soft: #153126;
+  --wpa-warn: #f2b94b;
+  --wpa-warn-soft: #3a2e14;
+  --wpa-bad: #ff9a90;
+  --wpa-bad-ink: #3a0a06;
+  --wpa-bad-soft: #3a1b19;
+  --wpa-focus: #cfb3ea;
+  --wpa-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .3);
+  color-scheme: dark;
+}
+/* @tokens end */
+
+/* ---------------------------------------------------------------- base */
+.wpa, .wpa *, .wpa *::before, .wpa *::after { box-sizing: border-box; }
+.wpa {
+  container-type: inline-size;
+  container-name: wpa;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--wpa-ink);
+  background: var(--wpa-bg);
+  border: 1px solid var(--wpa-line);
+  border-radius: 14px;
+  margin: 12px auto;
+  max-width: 940px;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+  accent-color: var(--wpa-accent);
+  scrollbar-color: var(--wpa-line-strong) transparent;
+  -webkit-text-size-adjust: 100%;
+}
+.wpa ::selection { background: var(--wpa-accent-soft); color: var(--wpa-ink); }
+.wpa h1, .wpa h2, .wpa h3, .wpa p, .wpa ul, .wpa ol, .wpa dl, .wpa dd, .wpa figure { margin: 0; padding: 0; }
+.wpa ul, .wpa ol { list-style: none; }
+.wpa .wpa-shell { padding: 16px; }
+.wpa .wpa-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.wpa :focus-visible { outline: 2px solid var(--wpa-focus); outline-offset: 2px; border-radius: 6px; }
+.wpa [tabindex="-1"]:focus { outline: none; }
+.wpa .wpa-ico { flex: none; }
+
+/* ---------------------------------------------------------------- cabecera */
+.wpa .wpa-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 0 16px; }
+.wpa .wpa-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.wpa .wpa-brand__ico { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--wpa-accent); color: var(--wpa-accent-ink); flex: none; }
+.wpa .wpa-brand__t { font-size: 16px; font-weight: 600; line-height: 1.25; }
+.wpa .wpa-brand__s { font-size: 13px; color: var(--wpa-ink-2); line-height: 1.3; }
+.wpa .wpa-ver { font-size: 12px; color: var(--wpa-ink-2); border: 1px solid var(--wpa-line); border-radius: 999px; padding: 2px 10px; flex: none; }
+
+/* ---------------------------------------------------------------- progreso: seis pasos unidos por un cable */
+.wpa .wpa-progress { padding: 4px 0 20px; }
+.wpa .wpa-progress__m { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.wpa .wpa-bar { height: 4px; background: var(--wpa-sunken); border-radius: 4px; overflow: hidden; margin-bottom: 14px; }
+.wpa .wpa-bar__fill { display: block; height: 100%; width: 100%; background: var(--wpa-accent); transform-origin: left center; border-radius: 4px; transition: transform .35s cubic-bezier(.22, 1, .36, 1); }
+.wpa .wpa-steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.wpa .wpa-step { min-width: 0; }
+.wpa .wpa-step__b { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; min-height: 44px; padding: 2px 0; background: none; border: 0; color: var(--wpa-ink-2); font: inherit; font-size: 12px; line-height: 1.2; text-align: center; cursor: default; }
+.wpa button.wpa-step__b { cursor: pointer; }
+.wpa .wpa-step__n { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--wpa-line-strong); background: var(--wpa-surface); color: var(--wpa-ink-2); font-weight: 600; font-size: 13px; }
+.wpa .wpa-step__n .wpa-ico { width: 16px; height: 16px; }
+.wpa .wpa-step--done .wpa-step__n { background: var(--wpa-accent); border-color: var(--wpa-accent); color: var(--wpa-accent-ink); }
+.wpa .wpa-step--now .wpa-step__n { border-color: var(--wpa-accent); color: var(--wpa-accent); box-shadow: 0 0 0 3px var(--wpa-accent-soft); }
+.wpa .wpa-step--now .wpa-step__b { color: var(--wpa-ink); font-weight: 600; }
+.wpa .wpa-step--done .wpa-step__b { color: var(--wpa-ink); }
+.wpa .wpa-step__t { display: none; overflow-wrap: anywhere; }
+@container wpa (min-width: 620px) { .wpa .wpa-step__t { display: block; } .wpa .wpa-progress__m { display: none; } }
+
+/* ---------------------------------------------------------------- paneles, titulos y pie */
+.wpa .wpa-pane { display: flex; flex-direction: column; gap: 16px; }
+.wpa .wpa-pane--center { align-items: center; text-align: center; padding: 16px 0; }
+.wpa .wpa-head { display: flex; flex-direction: column; gap: 6px; }
+.wpa .wpa-title { font-size: 22px; line-height: 1.25; font-weight: 650; letter-spacing: -.01em; text-wrap: balance; }
+.wpa .wpa-lead { font-size: 15px; color: var(--wpa-ink-2); max-width: 62ch; }
+.wpa .wpa-pane--center .wpa-lead { margin: 0 auto; }
+.wpa .wpa-h3 { font-size: 15px; font-weight: 600; margin-top: 8px; }
+.wpa .wpa-p { color: var(--wpa-ink-2); max-width: 66ch; }
+.wpa .wpa-hint { font-size: 13px; color: var(--wpa-ink-2); }
+.wpa .wpa-err { font-size: 13px; color: var(--wpa-bad); display: flex; gap: 6px; }
+.wpa .wpa-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 12px; margin-top: 4px; border-top: 1px solid var(--wpa-line); }
+.wpa .wpa-foot__r { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: flex-end; margin-left: auto; }
+.wpa .wpa-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.wpa .wpa-row--end { justify-content: flex-end; }
+.wpa .wpa-row--center { justify-content: center; }
+.wpa .wpa-hr { border: 0; border-top: 1px solid var(--wpa-line); margin: 12px 0; }
+.wpa .wpa-link { display: inline-flex; align-items: center; gap: 6px; color: var(--wpa-accent); font-weight: 600; text-underline-offset: 3px; min-height: 44px; }
+.wpa .wpa-card { background: var(--wpa-surface); border: 1px solid var(--wpa-line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.wpa .wpa-card .wpa-h3 { margin-top: 0; }
+
+/* ---------------------------------------------------------------- botones */
+.wpa .wpa-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 16px; border-radius: 8px; border: 1px solid transparent;
+  font: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; text-decoration: none; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s, transform .12s; }
+.wpa .wpa-btn:active:not([disabled]) { transform: translateY(1px); }
+.wpa .wpa-btn[disabled] { opacity: .5; cursor: not-allowed; }
+.wpa .wpa-btn--primary { background: var(--wpa-accent); color: var(--wpa-accent-ink); }
+.wpa .wpa-btn--primary:hover:not([disabled]) { background: color-mix(in srgb, var(--wpa-accent) 88%, var(--wpa-ink)); }
+.wpa .wpa-btn--secondary { background: var(--wpa-surface); color: var(--wpa-ink); border-color: var(--wpa-line-strong); }
+.wpa .wpa-btn--secondary:hover:not([disabled]) { background: var(--wpa-sunken); }
+.wpa .wpa-btn--ghost { background: transparent; color: var(--wpa-accent); }
+.wpa .wpa-btn--ghost:hover:not([disabled]) { background: var(--wpa-accent-soft); }
+.wpa .wpa-btn--danger { background: var(--wpa-bad); color: var(--wpa-bad-ink); }
+.wpa .wpa-btn .wpa-ico { width: 18px; height: 18px; }
+.wpa a.wpa-btn { color: inherit; }
+.wpa a.wpa-btn--primary { color: var(--wpa-accent-ink); }
+
+/* ---------------------------------------------------------------- semaforo: la lampara y la fila de comprobacion */
+.wpa .wpa-lamp { position: relative; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; flex: none; border: 2px solid currentColor; }
+.wpa .wpa-lamp .wpa-ico { width: 18px; height: 18px; }
+.wpa .wpa-lamp--ok { color: var(--wpa-ok); background: var(--wpa-ok-soft); }
+.wpa .wpa-lamp--warn { color: var(--wpa-warn); background: var(--wpa-warn-soft); }
+.wpa .wpa-lamp--bad { color: var(--wpa-bad); background: var(--wpa-bad-soft); }
+.wpa .wpa-lamp--skip { color: var(--wpa-ink-2); background: var(--wpa-sunken); border-style: dashed; }
+.wpa .wpa-lamp--run { color: var(--wpa-accent); background: var(--wpa-accent-soft); }
+.wpa .wpa-lamp--run .wpa-ico { animation: wpa-spin 1.1s linear infinite; }
+.wpa .wpa-lamp--ok::after, .wpa .wpa-lamp--bad::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid currentColor; opacity: 0; transform: scale(.75); animation: wpa-ring .7s cubic-bezier(.22, 1, .36, 1) 1; }
+@keyframes wpa-spin { to { transform: rotate(360deg); } }
+@keyframes wpa-ring { 0% { opacity: .55; transform: scale(.75); } 100% { opacity: 0; transform: scale(1.15); } }
+.wpa .wpa-checks { display: flex; flex-direction: column; border: 1px solid var(--wpa-line); border-radius: 12px; background: var(--wpa-surface); overflow: hidden; }
+.wpa .wpa-check { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--wpa-line); }
+.wpa .wpa-check:first-child { border-top: 0; }
+.wpa .wpa-check.is-critical { background: var(--wpa-bad-soft); }
+.wpa .wpa-check__main { display: flex; gap: 12px; align-items: flex-start; min-width: 0; }
+.wpa .wpa-check__txt { min-width: 0; flex: 1; }
+.wpa .wpa-check__t { font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.wpa .wpa-check__crit { font-size: 12px; font-weight: 600; color: var(--wpa-bad); border: 1px solid var(--wpa-bad); border-radius: 999px; padding: 0 8px; line-height: 1.6; }
+.wpa .wpa-check__r { color: var(--wpa-ink-2); font-size: 14px; overflow-wrap: anywhere; }
+.wpa .wpa-check.is-critical .wpa-check__r { color: var(--wpa-ink); }
+.wpa .wpa-check__acts { display: flex; gap: 8px; flex-wrap: wrap; padding-left: 48px; }
+.wpa .wpa-why { padding: 10px 12px; margin-left: 48px; background: var(--wpa-sunken); border-radius: 8px; font-size: 14px; color: var(--wpa-ink); max-width: 70ch; }
+.wpa .wpa-fix { margin-left: 48px; display: flex; flex-direction: column; gap: 10px; padding: 12px; border: 1px solid var(--wpa-line); border-radius: 10px; background: var(--wpa-bg); }
+.wpa .wpa-fix__d { font-size: 14px; color: var(--wpa-ink); max-width: 70ch; }
+.wpa .wpa-fix__s { display: flex; align-items: center; gap: 8px; color: var(--wpa-ink-2); }
+.wpa .wpa-spin { animation: wpa-spin 1.1s linear infinite; }
+@container wpa (min-width: 640px) {
+  .wpa .wpa-check { grid-template-columns: 1fr auto; align-items: start; }
+  .wpa .wpa-check__acts { padding-left: 0; justify-content: flex-end; }
+  .wpa .wpa-why, .wpa .wpa-fix { grid-column: 1 / -1; }
+}
+@container wpa (max-width: 440px) { .wpa .wpa-why, .wpa .wpa-fix { margin-left: 0; } .wpa .wpa-check__acts { padding-left: 0; } }
+
+/* resumen y chips */
+.wpa .wpa-sum { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 10px 14px; background: var(--wpa-surface); border: 1px solid var(--wpa-line); border-radius: 12px; }
+.wpa .wpa-sum__t { font-weight: 600; }
+.wpa .wpa-sum__c { display: flex; gap: 8px; flex-wrap: wrap; }
+.wpa .wpa-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; line-height: 1.4; padding: 2px 10px 2px 6px; border-radius: 999px; border: 1px solid currentColor; }
+.wpa .wpa-chip .wpa-ico { width: 14px; height: 14px; }
+.wpa .wpa-chip--ok { color: var(--wpa-ok); background: var(--wpa-ok-soft); }
+.wpa .wpa-chip--warn { color: var(--wpa-warn); background: var(--wpa-warn-soft); }
+.wpa .wpa-chip--bad { color: var(--wpa-bad); background: var(--wpa-bad-soft); }
+.wpa .wpa-chip--skip { color: var(--wpa-ink-2); background: var(--wpa-sunken); }
+.wpa .wpa-appliedbox { margin-top: 8px; padding: 10px 14px; border: 1px dashed var(--wpa-line-strong); border-radius: 12px; }
+.wpa .wpa-applied { display: flex; flex-direction: column; }
+.wpa .wpa-applied li { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; }
+
+/* notas */
+.wpa .wpa-note { display: flex; gap: 10px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--wpa-line-strong); background: var(--wpa-surface); font-size: 14px; max-width: 76ch; }
+.wpa .wpa-note .wpa-ico { margin-top: 2px; }
+.wpa .wpa-note p { color: inherit; }
+.wpa .wpa-note strong { display: block; font-weight: 600; }
+.wpa .wpa-note--ok { background: var(--wpa-ok-soft); border-color: var(--wpa-ok); color: var(--wpa-ink); }
+.wpa .wpa-note--ok .wpa-ico { color: var(--wpa-ok); }
+.wpa .wpa-note--warn { background: var(--wpa-warn-soft); border-color: var(--wpa-warn); color: var(--wpa-ink); }
+.wpa .wpa-note--warn .wpa-ico { color: var(--wpa-warn); }
+.wpa .wpa-note--bad { background: var(--wpa-bad-soft); border-color: var(--wpa-bad); color: var(--wpa-ink); }
+.wpa .wpa-note--bad .wpa-ico { color: var(--wpa-bad); }
+.wpa .wpa-note--info { background: var(--wpa-accent-soft); border-color: var(--wpa-accent); color: var(--wpa-ink); }
+.wpa .wpa-note--info .wpa-ico { color: var(--wpa-accent); }
+
+/* ---------------------------------------------------------------- formularios */
+.wpa .wpa-field { display: flex; flex-direction: column; gap: 6px; }
+.wpa .wpa-label { font-weight: 600; font-size: 14px; }
+.wpa .wpa-input { width: 100%; min-height: 44px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--wpa-line-strong); background: var(--wpa-surface); color: var(--wpa-ink); font: inherit; font-size: 15px; box-shadow: none; }
+.wpa .wpa-input--area { min-height: 88px; resize: vertical; }
+.wpa .wpa-input::placeholder { color: var(--wpa-ink-2); opacity: 1; }
+.wpa .wpa-input[disabled] { opacity: .6; }
+.wpa .wpa-field.has-error .wpa-input, .wpa .wpa-input[aria-invalid="true"] { border-color: var(--wpa-bad); border-width: 2px; }
+.wpa .wpa-grid2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@container wpa (min-width: 560px) { .wpa .wpa-grid2 { grid-template-columns: 1fr 1fr; } }
+.wpa .wpa-check-l { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 8px 0; cursor: pointer; font-size: 14px; }
+.wpa .wpa-check-l input { width: 22px; height: 22px; margin: 0; flex: none; }
+.wpa .wpa-fs { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.wpa .wpa-fs legend { font-weight: 600; font-size: 14px; padding: 0; margin-bottom: 4px; }
+.wpa .wpa-choices { display: flex; flex-direction: column; gap: 8px; }
+.wpa .wpa-choice { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: center; min-height: 56px; padding: 12px 16px; border: 1px solid var(--wpa-line-strong); border-radius: 12px; background: var(--wpa-surface); cursor: pointer; transition: border-color .15s, background-color .15s; }
+.wpa .wpa-choice:hover { background: var(--wpa-sunken); }
+.wpa .wpa-choice.is-on { border-color: var(--wpa-accent); background: var(--wpa-accent-soft); box-shadow: inset 0 0 0 1px var(--wpa-accent); }
+.wpa .wpa-choice__in { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.wpa .wpa-choice:has(.wpa-choice__in:focus-visible) { outline: 2px solid var(--wpa-focus); outline-offset: 2px; }
+.wpa .wpa-choice__dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--wpa-line-strong); background: var(--wpa-surface); position: relative; }
+.wpa .wpa-choice.is-on .wpa-choice__dot { border-color: var(--wpa-accent); }
+.wpa .wpa-choice.is-on .wpa-choice__dot::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--wpa-accent); }
+.wpa .wpa-choice__body { display: flex; flex-direction: column; min-width: 0; }
+.wpa .wpa-choice__t { font-weight: 600; }
+.wpa .wpa-choice__d { font-size: 13px; color: var(--wpa-ink-2); }
+.wpa .wpa-choice.is-on .wpa-choice__d { color: var(--wpa-ink); }
+.wpa .wpa-choice__eg { grid-column: 2; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: var(--wpa-ink-2); }
+.wpa .wpa-choice.is-on .wpa-choice__eg { color: var(--wpa-ink); }
+@container wpa (min-width: 560px) { .wpa .wpa-choice { grid-template-columns: auto 1fr auto; } .wpa .wpa-choice__eg { grid-column: 3; text-align: right; } }
+
+/* interruptor */
+.wpa .wpa-switchrow { padding: 4px 0; }
+.wpa .wpa-switch { position: relative; display: flex; align-items: center; gap: 14px; min-height: 52px; cursor: pointer; }
+.wpa .wpa-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; inset: 0; margin: 0; cursor: pointer; }
+.wpa .wpa-switch__ui { width: 46px; height: 28px; border-radius: 999px; border: 1.5px solid var(--wpa-line-strong); background: var(--wpa-surface); position: relative; flex: none; transition: background-color .15s, border-color .15s; }
+.wpa .wpa-switch__ui::after { content: ""; position: absolute; top: 3px; left: 3px; width: 19px; height: 19px; border-radius: 50%; background: var(--wpa-line-strong); transition: transform .18s cubic-bezier(.22, 1, .36, 1), background-color .15s; }
+.wpa .wpa-switch input:checked + .wpa-switch__ui { background: var(--wpa-accent); border-color: var(--wpa-accent); }
+.wpa .wpa-switch input:checked + .wpa-switch__ui::after { transform: translateX(18px); background: var(--wpa-accent-ink); }
+.wpa .wpa-switch input:focus-visible + .wpa-switch__ui { outline: 2px solid var(--wpa-focus); outline-offset: 2px; }
+.wpa .wpa-switch__t { display: flex; flex-direction: column; }
+.wpa .wpa-switch__t span { font-size: 13px; color: var(--wpa-ink-2); }
+
+/* carga de archivo */
+.wpa .wpa-drop { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 28px 16px; border: 2px dashed var(--wpa-line-strong); border-radius: 12px; background: var(--wpa-surface); cursor: pointer; position: relative; transition: background-color .15s, border-color .15s; }
+.wpa .wpa-drop:hover, .wpa .wpa-drop.is-over { background: var(--wpa-accent-soft); border-color: var(--wpa-accent); }
+.wpa .wpa-drop.has-error { border-color: var(--wpa-bad); }
+.wpa .wpa-drop .wpa-ico { width: 28px; height: 28px; color: var(--wpa-accent); }
+.wpa .wpa-drop__t { font-weight: 600; overflow-wrap: anywhere; }
+.wpa .wpa-drop__h { font-size: 13px; color: var(--wpa-ink-2); }
+.wpa .wpa-file__in { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.wpa .wpa-drop:has(.wpa-file__in:focus-visible) { outline: 2px solid var(--wpa-focus); outline-offset: 2px; }
+
+/* comandos */
+.wpa .wpa-code { border: 1px solid var(--wpa-line); border-radius: 10px; background: var(--wpa-surface); overflow: hidden; }
+.wpa .wpa-code__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 4px 2px 12px; border-bottom: 1px solid var(--wpa-line); }
+.wpa .wpa-code__label { font-size: 13px; font-weight: 600; }
+.wpa .wpa-code__pre { margin: 0; padding: 10px 12px; background: var(--wpa-sunken); overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.5; white-space: pre; color: var(--wpa-ink); }
+.wpa .wpa-seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.wpa .wpa-seg__b { min-height: 44px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--wpa-line-strong); background: var(--wpa-surface); color: var(--wpa-ink); font: inherit; font-size: 14px; cursor: pointer; }
+.wpa .wpa-seg__b.is-on { background: var(--wpa-accent); border-color: var(--wpa-accent); color: var(--wpa-accent-ink); font-weight: 600; }
+.wpa .wpa-ol { list-style: decimal; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; max-width: 70ch; }
+.wpa .wpa-ul { list-style: disc; padding-left: 22px; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.wpa .wpa-ca { display: flex; flex-direction: column; gap: 10px; }
+
+/* medidor */
+.wpa .wpa-meter { height: 14px; border-radius: 7px; background: var(--wpa-sunken); border: 1px solid var(--wpa-line); overflow: hidden; }
+.wpa .wpa-meter__fill { display: block; height: 100%; width: 100%; background: var(--wpa-ok); transform-origin: left center; transform: scaleX(0); transition: transform .08s linear; }
+
+/* ---------------------------------------------------------------- pasos concretos */
+.wpa .wpa-welcome { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
+.wpa .wpa-art { display: flex; align-items: center; gap: 0; }
+.wpa .wpa-art__n { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 14px; background: var(--wpa-surface); border: 1.5px solid var(--wpa-line-strong); color: var(--wpa-ink); }
+.wpa .wpa-art__n .wpa-ico { width: 26px; height: 26px; }
+.wpa .wpa-art__n--b { color: var(--wpa-ok); border-color: var(--wpa-ok); background: var(--wpa-ok-soft); }
+.wpa .wpa-art__line { position: relative; width: 48px; height: 2px; background: var(--wpa-line); overflow: hidden; }
+.wpa .wpa-art__line::after { content: ""; position: absolute; inset: 0; background: var(--wpa-accent); transform-origin: left center; transform: scaleX(0); animation: wpa-lit .9s cubic-bezier(.22, 1, .36, 1) .25s forwards; }
+.wpa .wpa-art__line + .wpa-art__n + .wpa-art__line::after { animation-delay: .6s; }
+@keyframes wpa-lit { to { transform: scaleX(1); } }
+.wpa .wpa-art--lock .wpa-art__n, .wpa .wpa-art--ok .wpa-art__n { width: 72px; height: 72px; border-radius: 50%; }
+.wpa .wpa-art--ok .wpa-art__n { color: var(--wpa-ok); border-color: var(--wpa-ok); background: var(--wpa-ok-soft); }
+.wpa .wpa-facts { display: grid; grid-template-columns: 1fr; gap: 0; border: 1px solid var(--wpa-line); border-radius: 12px; background: var(--wpa-surface); overflow: hidden; }
+.wpa .wpa-fact { display: flex; flex-direction: column; gap: 2px; padding: 10px 16px; border-top: 1px solid var(--wpa-line); }
+.wpa .wpa-fact:first-child { border-top: 0; }
+.wpa .wpa-fact dt { font-size: 13px; color: var(--wpa-ink-2); }
+.wpa .wpa-fact dd { font-weight: 600; overflow-wrap: anywhere; }
+@container wpa (min-width: 560px) { .wpa .wpa-fact { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 16px; } .wpa .wpa-fact dd { text-align: right; } }
+.wpa .wpa-sslstate { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--wpa-line); background: var(--wpa-surface); }
+.wpa .wpa-sslstate--ok { border-color: var(--wpa-ok); background: var(--wpa-ok-soft); }
+.wpa .wpa-sslstate--warn { border-color: var(--wpa-warn); background: var(--wpa-warn-soft); }
+.wpa .wpa-sslstate--bad { border-color: var(--wpa-bad); background: var(--wpa-bad-soft); }
+.wpa .wpa-sslstate__t { font-weight: 600; }
+.wpa .wpa-manual { display: flex; flex-direction: column; gap: 8px; }
+.wpa .wpa-confirm { display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid var(--wpa-accent); border-radius: 12px; background: var(--wpa-surface); }
+.wpa .wpa-confirm .wpa-h3 { margin-top: 0; }
+.wpa .wpa-bycode { list-style: disc; padding-left: 22px; font-size: 14px; display: flex; flex-direction: column; gap: 2px; }
+.wpa .wpa-diff { display: flex; flex-direction: column; border: 1px solid var(--wpa-line); border-radius: 12px; background: var(--wpa-surface); overflow: hidden; }
+.wpa .wpa-diff__i { padding: 10px 16px; border-top: 1px solid var(--wpa-line); }
+.wpa .wpa-diff__i:first-child { border-top: 0; }
+.wpa .wpa-diff__h { margin-bottom: 4px; }
+.wpa .wpa-diff__c { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+.wpa .wpa-diff__c li { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.wpa .wpa-diff__f { color: var(--wpa-ink-2); min-width: 9em; }
+.wpa .wpa-diff__v { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+.wpa .wpa-diff__v del { color: var(--wpa-bad); text-decoration: line-through; }
+.wpa .wpa-diff__v ins { color: var(--wpa-ok); text-decoration: none; font-weight: 600; }
+.wpa .wpa-diff__v .wpa-ico { width: 14px; height: 14px; color: var(--wpa-ink-2); }
+
+/* tablas */
+.wpa .wpa-tablewrap { overflow-x: auto; border: 1px solid var(--wpa-line); border-radius: 12px; background: var(--wpa-surface); }
+.wpa .wpa-table { width: 100%; border-collapse: collapse; font-size: 14px; background: transparent; margin: 0; }
+.wpa .wpa-table th { text-align: left; font-size: 13px; font-weight: 600; color: var(--wpa-ink-2); padding: 10px 12px; border-bottom: 1px solid var(--wpa-line); background: var(--wpa-sunken); white-space: nowrap; }
+.wpa .wpa-table td { padding: 10px 12px; border-bottom: 1px solid var(--wpa-line); vertical-align: top; overflow-wrap: anywhere; background: transparent; color: var(--wpa-ink); }
+.wpa .wpa-table tr:last-child td { border-bottom: 0; }
+.wpa .wpa-table tr.is-bad td { background: var(--wpa-bad-soft); }
+.wpa .wpa-codes { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; font-size: 13px; }
+.wpa .wpa-res__d { display: block; font-size: 13px; margin-top: 4px; }
+.wpa .wpa-th-cb, .wpa .wpa-td-cb { width: 52px; }
+.wpa .wpa-td-cb input { width: 22px; height: 22px; margin: 0; }
+.wpa .wpa-cbbox { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; cursor: pointer; }
+.wpa .wpa-tr-detail td { display: block; }
+@container wpa (max-width: 559px) {
+  .wpa .wpa-table thead { display: none; }
+  .wpa .wpa-table, .wpa .wpa-table tbody, .wpa .wpa-table tr, .wpa .wpa-table td { display: block; width: 100%; }
+  .wpa .wpa-table tr { padding: 8px 0; border-bottom: 1px solid var(--wpa-line); }
+  .wpa .wpa-table td { border: 0; padding: 4px 12px; display: flex; gap: 12px; justify-content: space-between; }
+  .wpa .wpa-table td::before { content: attr(data-l); color: var(--wpa-ink-2); font-size: 13px; flex: none; }
+  .wpa .wpa-table td:not([data-l])::before { content: none; }
+  .wpa .wpa-table td > * { text-align: right; }
+}
+.wpa .wpa-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.wpa .wpa-toolbar .wpa-input { width: min(280px, 100%); }
+.wpa .wpa-toolbar__sp { flex: 1; }
+.wpa .wpa-pager { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.wpa .wpa-pager__t { font-size: 13px; color: var(--wpa-ink-2); }
+
+/* pestanas */
+.wpa .wpa-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--wpa-line); margin-bottom: 16px; overflow-x: auto; }
+.wpa .wpa-tab { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; background: none; color: var(--wpa-ink-2); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.wpa .wpa-tab .wpa-ico { width: 18px; height: 18px; }
+.wpa .wpa-tab:hover { color: var(--wpa-ink); }
+.wpa .wpa-tab.is-on { color: var(--wpa-accent); border-bottom-color: var(--wpa-accent); }
+.wpa .wpa-panel { display: flex; flex-direction: column; gap: 14px; }
+.wpa .wpa-tabhead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.wpa .wpa-noscript { padding: 12px; border: 1px solid var(--wpa-line); border-radius: 8px; }
+
+/* entrada de cada paso: una sola vez, solo opacidad y transform */
+.wpa[data-enter] .wpa-pane, .wpa[data-enter] .wpa-panel { animation: wpa-in .24s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes wpa-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+@container wpa (max-width: 440px) {
+  .wpa .wpa-shell { padding: 12px; }
+  .wpa .wpa-title { font-size: 20px; }
+  .wpa .wpa-foot { flex-direction: column-reverse; align-items: stretch; }
+  .wpa .wpa-foot__r { margin-left: 0; justify-content: stretch; }
+  .wpa .wpa-foot .wpa-btn { width: 100%; }
+  .wpa .wpa-ver { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wpa *, .wpa *::before, .wpa *::after { animation: none !important; transition: none !important; }
+  .wpa .wpa-art__line::after { transform: scaleX(1); }
+}
+@media (prefers-contrast: more) {
+  .wpa { --wpa-line: var(--wpa-line-strong); }
+  .wpa .wpa-check__r, .wpa .wpa-hint, .wpa .wpa-brand__s { color: var(--wpa-ink); }
+}
+.wpa .wpa-chip { white-space: nowrap; flex: none; }
+@container wpa (max-width: 559px) {
+  .wpa .wpa-table td.wpa-td-st { flex-direction: column; align-items: flex-end; gap: 4px; }
+  .wpa .wpa-table td.wpa-td-st > * { text-align: right; }
+}
+/* El marco de Issabel fija tamano y fuente en elementos sueltos: se restablecen dentro del asistente */
+.wpa p, .wpa li, .wpa dd, .wpa dt, .wpa td, .wpa th, .wpa label, .wpa legend { font-size: inherit; font-family: inherit; line-height: inherit; color: inherit; }
+.wpa button, .wpa input, .wpa select, .wpa textarea { font-family: inherit; }
+.wpa .wpa-p, .wpa .wpa-lead, .wpa .wpa-hint, .wpa .wpa-check__r, .wpa .wpa-fact dt, .wpa .wpa-choice__d, .wpa .wpa-switch__t span, .wpa .wpa-pager__t { color: var(--wpa-ink-2); }
+.wpa .wpa-lead { font-size: 15px; }
+.wpa .wpa-hint, .wpa .wpa-fact dt, .wpa .wpa-choice__d, .wpa .wpa-switch__t span, .wpa .wpa-pager__t { font-size: 13px; }
+.wpa .wpa-check__r { font-size: 14px; }
+.wpa .wpa-choice.is-on .wpa-choice__d { color: var(--wpa-ink); }
+.wpa .wpa-check.is-critical .wpa-check__r { color: var(--wpa-ink); }
+/* contenedores internos: separacion vertical uniforme y nada que se salga de su caja */
+.wpa .wpa-profile, .wpa .wpa-applyall, .wpa .wpa-anex, .wpa .wpa-alta, .wpa .wpa-ca, .wpa .wpa-tabsview, .wpa .wpa-tabpanel { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.wpa .wpa-profile .wpa-h3, .wpa .wpa-applyall .wpa-h3, .wpa .wpa-anex .wpa-h3 { margin-top: 0; }
+.wpa .wpa-field > * { max-width: 100%; min-width: 0; }
+.wpa .wpa-input { max-width: 100%; display: block; }
+.wpa .wpa-fs legend { margin-bottom: 8px; }
+.wpa .wpa-fs { gap: 8px; }
+/* el marco de Issabel pone box-sizing: content-box a input[type=text] (especificidad mayor que .wpa *) */
+.wpa input, .wpa textarea, .wpa select, .wpa button { box-sizing: border-box; }
+
+/* ---------------------------------------------------------------- v0.5.1: pregunta de llamadas simultaneas (rango de audio) */
+.wpa .wpa-rtpq { display: flex; flex-direction: column; gap: 12px; }
+.wpa .wpa-rtpq .wpa-input--num { width: 9em; max-width: 100%; font-variant-numeric: tabular-nums; }
+.wpa .wpa-rtpq--fix { padding-top: 4px; }
+.wpa .wpa-rtp__res { display: flex; flex-direction: column; gap: 8px; }
+.wpa .wpa-rtp__formula { max-width: 70ch; }
+.wpa .wpa-check__r--extra { margin-top: 2px; }
+
+/* ---------------------------------------------------------------- inicio rapido (quick.js) */
+.wpa .wpa-shell--quick { padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.wpa .wpa-shell--quick > :not(.wpa-top) { margin: 0 20px; }
+.wpa .wpa-shell--quick > .wpa-foot { margin-bottom: 16px; }
+.wpa .wpa-top--quick { padding: 16px 20px; background: var(--wpa-accent); color: var(--wpa-accent-ink); border-radius: 13px 13px 0 0; }
+.wpa .wpa-top--quick .wpa-brand__ico { background: var(--wpa-accent-ink); color: var(--wpa-accent); }
+.wpa .wpa-top--quick .wpa-brand__s { color: var(--wpa-accent-ink); }
+.wpa .wpa-top--quick .wpa-ver { color: var(--wpa-accent-ink); border-color: var(--wpa-accent-ink); }
+.wpa .wpa-quick-box { gap: 12px; }
+.wpa .wpa-quick-steps { display: flex; flex-direction: column; gap: 6px; counter-reset: s; max-width: 66ch; }
+.wpa .wpa-quick-steps li { counter-increment: s; display: grid; grid-template-columns: 24px 1fr; gap: 8px; align-items: start; }
+.wpa .wpa-quick-steps li::before { content: counter(s); display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--wpa-accent); color: var(--wpa-accent-ink); font-size: 13px; font-weight: 700; }
+.wpa .wpa-quick-list { display: flex; flex-direction: column; gap: 6px; padding-left: 20px; list-style: disc; max-width: 70ch; }
+.wpa .wpa-quick-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+.wpa .wpa-quick-form .wpa-label { flex: 1 1 100%; }
+.wpa .wpa-quick-form .wpa-input { width: 160px; }
+.wpa .wpa-cmd { display: block; flex: 1; min-width: 0; padding: 10px 12px; background: var(--wpa-sunken); border: 1px solid var(--wpa-line); border-radius: 8px; font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+.wpa .wpa-quick-ready .wpa-h3 { display: flex; align-items: center; gap: 8px; color: var(--wpa-ok); }
+.wpa .wpa-quick-bar { border: 1px solid var(--wpa-line); border-radius: 10px; overflow: hidden; min-height: 0; }
+.wpa .wpa-quick-bar:empty { display: none; }
+.wpa .wpa-quick-msg { color: var(--wpa-ink); }
+.wpa .wpa-check__crit { display: none; }

@@ -1,0 +1,49 @@
+<?php
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ * Copyright (C) 2026 Galcyon
+ */
+global $arrLangModule;
+$arrLangModule = array(
+"ERROR" => "ERROR",
+"Message" => "Message",
+"Validation Error" => "Validation Error",
+"Only administrators can use this module" => "Only administrators can use this module",
+"Cannot connect to the webphone database" => "Cannot connect to the webphone database",
+"Request rejected: invalid or missing security token. Reload the page and try again." => "Request rejected: invalid or missing security token. Reload the page and try again.",
+"Webphone Lite" => "Webphone Lite",
+"Enable" => "Enable",
+"Disable" => "Disable",
+"Settings" => "Settings",
+"User" => "User",
+"Description" => "Description",
+"Extension" => "Extension",
+"Webphone enabled" => "Webphone enabled",
+"WebRTC extension" => "WebRTC extension",
+"Yes" => "Yes",
+"No" => "No",
+"Outdated (extension changed)" => "Outdated (extension changed)",
+"(none)" => "(none)",
+"Users enabled" => "Users enabled",
+"Users disabled" => "Users disabled",
+"Skipped (no valid extension, or extension already in use)" => "Skipped (no valid extension, or extension already in use)",
+"Warning: the extension of some enabled users is not a WebRTC extension" => "Warning: the extension of some enabled users is not a WebRTC extension",
+"No users selected" => "No users selected",
+"WebSocket path" => "WebSocket path",
+"STUN servers" => "STUN servers",
+"Registration expiry (seconds)" => "Registration expiry (seconds)",
+"Save" => "Save",
+"Users" => "Users",
+"Webphone settings" => "Webphone settings",
+"Required field" => "Required field",
+"Absolute path served by Apache toward Asterisk, for example /kit-ws" => "Absolute path served by Apache toward Asterisk, for example /kit-ws",
+"One per line or separated by commas: stun:host:port. Empty means no STUN. Maximum 5." => "One per line or separated by commas: stun:host:port. Empty means no STUN. Maximum 5.",
+"Between 60 and 3600" => "Between 60 and 3600",
+"The following fields contain errors" => "The following fields contain errors",
+"Settings saved" => "Settings saved",
+"The settings could not be saved" => "The settings could not be saved",
+"You do not have access to this module" => "You do not have access to this module",
+"This page needs JavaScript. Without it you can still enable or disable users with this form." => "This page needs JavaScript. Without it you can still enable or disable users with this form.",
+"User ids" => "User ids"
+);
+?>

@@ -1,0 +1,49 @@
+<?php
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ * Copyright (C) 2026 Galcyon
+ */
+global $arrLangModule;
+$arrLangModule = array(
+"ERROR" => "ERRO",
+"Message" => "Mensagem",
+"Validation Error" => "Erro de validação",
+"Only administrators can use this module" => "Somente administradores podem usar este módulo",
+"Cannot connect to the webphone database" => "Não foi possível conectar ao banco de dados do webphone",
+"Request rejected: invalid or missing security token. Reload the page and try again." => "Solicitação recusada: o token de segurança está ausente ou é inválido. Recarregue a página e tente de novo.",
+"Webphone Lite" => "Webphone Lite",
+"Enable" => "Ativar",
+"Disable" => "Desativar",
+"Settings" => "Ajustes",
+"User" => "Usuário",
+"Description" => "Descrição",
+"Extension" => "Ramal",
+"Webphone enabled" => "Webphone ativado",
+"WebRTC extension" => "Ramal WebRTC",
+"Yes" => "Sim",
+"No" => "Não",
+"Outdated (extension changed)" => "Desatualizado (o ramal mudou)",
+"(none)" => "(nenhum)",
+"Users enabled" => "Usuários ativados",
+"Users disabled" => "Usuários desativados",
+"Skipped (no valid extension, or extension already in use)" => "Ignorados (sem ramal válido ou ramal já em uso)",
+"Warning: the extension of some enabled users is not a WebRTC extension" => "Aviso: o ramal de alguns usuários ativados não é um ramal WebRTC",
+"No users selected" => "Você não selecionou nenhum usuário",
+"WebSocket path" => "Caminho WebSocket",
+"STUN servers" => "Servidores STUN",
+"Registration expiry (seconds)" => "Validade do registro (segundos)",
+"Save" => "Salvar",
+"Users" => "Usuários",
+"Webphone settings" => "Ajustes do webphone",
+"Required field" => "Campo obrigatório",
+"Absolute path served by Apache toward Asterisk, for example /kit-ws" => "Caminho absoluto que o Apache encaminha ao Asterisk, por exemplo /kit-ws",
+"One per line or separated by commas: stun:host:port. Empty means no STUN. Maximum 5." => "Um por linha ou separados por vírgulas: stun:host:porta. Vazio significa sem STUN. Máximo 5.",
+"Between 60 and 3600" => "Entre 60 e 3600",
+"The following fields contain errors" => "Os seguintes campos têm erros",
+"Settings saved" => "Ajustes salvos",
+"The settings could not be saved" => "Não foi possível salvar os ajustes",
+"You do not have access to this module" => "Você não tem acesso a este módulo",
+"This page needs JavaScript. Without it you can still enable or disable users with this form." => "Esta página precisa de JavaScript. Sem ele, você ainda pode ativar ou desativar usuários com este formulário.",
+"User ids" => "Identificadores de usuário"
+);
+?>

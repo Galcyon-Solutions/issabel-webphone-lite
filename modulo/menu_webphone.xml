@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-2.0-or-later -->
+<!-- Copyright (C) 2026 Galcyon -->
+<!-- Cuelga del menu de fabrica "pbxconfig" (PBX). Esa carpeta ya existe, asi que no se crea un menu raiz. -->
+<!-- El id "webphone" ya lo usa el plugin de terceros issabel-webphone: este modulo se llama webphone_kit. -->
+<module>
+  <menulist>
+    <menuitem menuid="webphone_kit" desc="Webphone Lite" parent="pbxconfig" module="yes" link="" order="53"></menuitem>
+  </menulist>
+</module>

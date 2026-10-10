@@ -1,0 +1,12 @@
+<!-- SPDX-License-Identifier: GPL-2.0-or-later -->
+<!-- Copyright (C) 2026 Galcyon -->
+<html>
+    <header>
+        <link rel="stylesheet" href="/themes/{$THEMENAME}/styles.css">
+        <link rel="stylesheet" href="/themes/{$THEMENAME}/help.css">
+    </header>
+    <body>
+        <h1>{$node_name}</h1>
+        <p align="Justify">Administración del webphone WebRTC. En la pestaña de usuarios activas o desactivas el webphone por usuario de Issabel (el usuario debe tener una extensión asignada). En Ajustes defines la ruta WebSocket, los servidores STUN y la vigencia del registro. Este módulo nunca muestra el secreto SIP.</p>
+    </body>
+</html>
