@@ -33,7 +33,7 @@ En el servidor, como root:
 
 ```bash
 dnf install -y git                                   # si no lo tienes
-git clone <URL-de-este-repositorio> /usr/src/issabel-webphone-lite
+git clone https://github.com/Galcyon-Solutions/issabel-webphone-lite.git /usr/src/issabel-webphone-lite
 cd /usr/src/issabel-webphone-lite
 bash install.sh                                      # modulo + base + helper
 bash install.sh --comprobar                          # resumen de lo instalado

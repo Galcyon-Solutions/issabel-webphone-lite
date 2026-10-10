@@ -51,7 +51,7 @@ Todo lo demás (varios anexos, rango de extensiones, CSV, usuarios, ajustes, dia
 
 ```bash
 dnf install -y git                                   # si no lo tienes
-git clone <URL-de-este-repositorio> /usr/src/issabel-webphone-lite
+git clone https://github.com/Galcyon-Solutions/issabel-webphone-lite.git /usr/src/issabel-webphone-lite
 cd /usr/src/issabel-webphone-lite
 bash install.sh                                      # modulo + base + helper + barra en toda la web
 bash install.sh --comprobar                          # resumen de lo instalado
@@ -97,4 +97,4 @@ Colores: antes los pares también pasaban el contraste numérico, el problema er
 
 ## Licencia
 
-GPL-2.0-or-later (ver `LICENSE`). Titular: Galcyon, **por confirmar antes de publicar**. El cliente incluye JsSIP (MIT) y otras dependencias: `THIRD_PARTY_LICENSES.md`.
+GPL-2.0-or-later (ver `LICENSE`). Titular: Galcyon Solutions E.I.R.L.. El cliente incluye JsSIP (MIT) y otras dependencias: `THIRD_PARTY_LICENSES.md`.
