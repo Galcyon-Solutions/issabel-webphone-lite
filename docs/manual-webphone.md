@@ -71,8 +71,8 @@ Ves un botón **Preparar**. Al pulsarlo **no cambia nada todavía**: te lista en
 ![Preparar](img/03-inicio-preparar.png)
 
 - *Crear la puerta `/kit-ws` en Apache* (un archivo propio, `webphone_kit-ws.conf`, y una recarga `graceful` de Apache sin cortar llamadas).
-- *Apagar el WebSocket del SIP antiguo* (`websocket_enabled=no` en `sip_general_custom.conf`, y recargar `chan_sip` y el WebSocket de PJSIP; los anexos `chan_sip` siguen funcionando por UDP y solo se cortan las conexiones WebSocket abiertas).
-- *No toco*: tus extensiones, el firewall, las rutas, el dialplan; Asterisk no se reinicia.
+- *Apagar el WebSocket del SIP antiguo* (`websocket_enabled=no` en `sip_general_custom.conf`) y **reiniciar Asterisk una vez** (unos 15 segundos, solo si no hay llamadas activas; los anexos `chan_sip` siguen funcionando por UDP). Recargar los módulos en caliente no sirve: el teléfono registraría, pero Asterisk no podría llamarlo después (la cola ni el login del agente funcionarían).
+- *No toco*: tus extensiones, el firewall, las rutas, el dialplan.
 
 Pulsa **Hacer estos cambios**: se aplican, se verifican y vuelves a ver la lista, ya en verde. Si hay llamadas activas, te avisa y pide confirmar. Después sigue el caso 1. Todo queda en bloques marcados `BEGIN/END webphone_kit` y se puede deshacer desde **Opciones avanzadas** o con `uninstall.sh`.
 

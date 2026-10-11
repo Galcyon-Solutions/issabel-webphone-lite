@@ -310,13 +310,22 @@ class WpkApi
         return $seen;
     }
 
-    /** chan_sip suelta el WebSocket al recargar; PJSIP lo reclama al cargarse, asi que se recarga su modulo de transporte. */
+    /**
+     * El WebSocket lo reclama el modulo que carga primero. Descargar y cargar el transporte de PJSIP "en caliente" deja a
+     * Asterisk sin poder ENVIAR peticiones a los telefonos WebSocket: el telefono registra, pero OPTIONS y las llamadas
+     * entrantes (la cola, el login del agente) fallan con PJSIP_EUNSUPTRANSPORT hasta el siguiente reinicio. Por eso se
+     * hace un reinicio limpio. Quien llama ya comprobo que no hay llamadas activas.
+     */
     private function reloadWsOwner()
     {
-        WpkSystem::asterisk('module reload chan_sip.so');
-        WpkSystem::asterisk('module unload res_pjsip_transport_websocket.so');
-        WpkSystem::asterisk('module load res_pjsip_transport_websocket.so');
-        WpkSystem::asterisk('module reload res_pjsip.so');
+        WpkSystem::asterisk('core restart now');
+        sleep(4);
+        for ($i = 0; $i < 12; $i++) {
+            if (stripos(WpkSystem::asterisk('core waitfullybooted'), 'fully booted') !== false) {
+                return;
+            }
+            sleep(2);
+        }
     }
 
     function a_fix(array $in)
